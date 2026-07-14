@@ -48,6 +48,8 @@ export const registerUser = async (req, res) => {
         _id: user._id,
         fullName: user.fullName,
         emailAddress: user.emailAddress,
+        phoneNumber: user.phoneNumber,
+        location: user.location,
         token: generateToken(user._id),
       });
     } else {
@@ -284,5 +286,26 @@ export const facebookLogin = async (req, res) => {
   } catch (error) {
     console.error("Facebook Auth Error:", error);
     res.status(500).json({ code: "server_error", message: error.message });
+  }
+};
+
+// @route   GET /api/auth/profile/:id
+// @access  Public
+export const getUserProfile = async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+    res.json({
+      success: true,
+      _id: user._id,
+      fullName: user.fullName,
+      emailAddress: user.emailAddress,
+      phoneNumber: user.phoneNumber,
+      location: user.location
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
 };
